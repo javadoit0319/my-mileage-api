@@ -7,6 +7,15 @@
 
 ## 실행 방법
 
+### DB
+
+- docker-compose 디렉토리로 이동 후 terminal 에서 `docker-compose up -d` 입력
+  - 도커가 설치되어 있어야 한다.
+
+### Application
+
+
+
 
 ## 개발 고려사항
 
@@ -14,7 +23,26 @@
   - 해당 프로젝트에 구현된 /events 는 포인트 적립/사용, 조회를 위한 기능을 제공한다.
   - reviewID 값이 요청 파라미터로 전달되기 때문에 이미 등록되었다고 생각했습니다.
     - 예로 Review ADD 요청의 reviewId 는 이미 DB에 저장된 된 ID 값 입니다.
+
+- 테이블 설계시 mileage 테이블의 pk를 어떻게 해야할지 오래 고민을 했습니다.
+  - pk를 어떤것으로 사용할지? auto_increment vs userId
+  - 타입은 어떤걸 사용할지? UUID vs auto_increment
+  - 결론은  auto_increment 키를 pk로 사용하기로 했습니다.
+    - uuid를 pk로 사용하고 save 시 select 쿼리가 추가로 발생하기 때문에 auto_increment를 pk로 사용
     
+
+## 개발
+
+### 1. 포인트 적립 API (/points)
+
+- ADD
+
+- MOD
+
+- DELETE
+  
+
+
 ## Api Request
 
  리뷰 작성 이벤트가 발생시 아래 api 로 이벤트를 전달합니다 
