@@ -4,25 +4,24 @@ import com.example.mymileageapi.app.AddMileageResponse;
 import com.example.mymileageapi.app.EventRequest;
 import com.example.mymileageapi.domain.MileageType;
 import com.example.mymileageapi.utils.AcceptanceTest;
-import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 
+import static com.example.mymileageapi.acceptance.MileageTestApiClient.이벤트API호출;
+import static com.example.mymileageapi.acceptance.MileageTestApiReuqest.이벤트요청생성;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("마일리지 인수테스트")
-public class MileageAcceptanceTest extends AcceptanceTest {
+public class MileageApiAcceptanceTest extends AcceptanceTest {
 
-
+    @DisplayName("마일리지 생성,수정,삭제 테스트")
     @Test
     void 마일리지테스트() {
         UUID 유저ID = UUID.randomUUID();
@@ -55,28 +54,6 @@ public class MileageAcceptanceTest extends AcceptanceTest {
         EventRequest DELETE요청 = 이벤트요청생성("REVIEW", "DELETE", 리뷰ID, "다시 컨텐츠를 썼어요!", Arrays.asList(포토ID_1), 유저ID, 장소ID);
         ExtractableResponse<Response> DELETE응답 = 이벤트API호출(DELETE요청);
         마일리지적립됨(DELETE응답, 3, MileageType.WITHDRAWAL.name(), 0);
-    }
-
-    private EventRequest 이벤트요청생성(String type, String action, UUID reviewId, String content, List<UUID> photoList, UUID userId, UUID placeId) {
-        return EventRequest.builder()
-                .type(type)
-                .action(action)
-                .reviewId(reviewId)
-                .content(content)
-                .attachedPhotoIds(photoList)
-                .userId(userId)
-                .placeId(placeId)
-                .build();
-    }
-
-    private ExtractableResponse<Response> 이벤트API호출(EventRequest request) {
-        return RestAssured
-                .given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(request)
-                .when().post("/events")
-                .then().log().all()
-                .extract();
     }
 
     private void 마일리지적립됨(ExtractableResponse<Response> response, int mileage, String type, int currentMileage) {

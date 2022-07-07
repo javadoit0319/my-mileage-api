@@ -27,6 +27,9 @@ public class Mileage {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
+    @Version
+    private int version;
+
     protected Mileage() {}
 
     @Builder

@@ -3,6 +3,7 @@ package com.example.mymileageapi.domain;
 import com.example.mymileageapi.utils.TestContainerDB;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +17,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("container-test")
 @DisplayName("Review DB 테스트")
 @SpringBootTest
 @Testcontainers

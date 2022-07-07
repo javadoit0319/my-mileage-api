@@ -14,39 +14,34 @@
 
 ### Application
 
-
-
+- docker-compose 를 이용해 컨테이너 생성 후 어플리케이션 실행.
+- Intellij 에서 실행시 profile 을 local 로 설정 후 실행
+  - Edit Configurations -> active profiles 를 local 설정
+- Jar 파일 생성 후 실행 
+  - 프로젝트가 있는 패키지로 이동 후 `mvn clean package` 명령어 입력해 jar 파일 생성
+  - `java -jar -Dspring.profiles.active=local jar파일이름` 입력해 실행
 
 ## 개발 고려사항
-
-- /events api 가 리뷰 작성 이벤트 전체를 처리하는건지, 포인트만을 위한 api 인지 정했습니다
-  - 해당 프로젝트에 구현된 /events 는 포인트 적립/사용, 조회를 위한 기능을 제공한다.
-  - reviewID 값이 요청 파라미터로 전달되기 때문에 이미 등록되었다고 생각했습니다.
-    - 예로 Review ADD 요청의 reviewId 는 이미 DB에 저장된 된 ID 값 입니다.
 
 - 테이블 설계시 mileage 테이블의 pk를 어떻게 해야할지 오래 고민을 했습니다.
   - pk를 어떤것으로 사용할지? auto_increment vs userId
   - 타입은 어떤걸 사용할지? UUID vs auto_increment
   - 결론은  auto_increment 키를 pk로 사용하기로 했습니다.
     - uuid를 pk로 사용하고 save 시 select 쿼리가 추가로 발생하기 때문에 auto_increment를 pk로 사용
-    
+
+- /events api 가 리뷰 작성 이벤트 전체를 처리하는건지, 포인트만을 위한 api 인지 정했습니다
+  - 해당 프로젝트에 구현된 /events 는 포인트 적립/사용, 조회를 위한 기능을 제공한다.
+  - reviewID 값이 요청 파라미터로 전달되기 때문에 이미 등록되었다고 생각했습니다.
+    - 예로 Review ADD 요청의 reviewId 는 이미 DB에 저장된 된 ID 값 입니다.
+
+- 낙관적 락을 적용해 변경사항이 누락되지 않게 했습니다.
 
 ## 개발
 
 ### 1. 포인트 적립 API (/points)
 
-- ADD
+리뷰 작성 이벤트가 발생시 아래 api 로 이벤트를 전달합니다
 
-- MOD
-
-- DELETE
-  
-
-
-## Api Request
-
- 리뷰 작성 이벤트가 발생시 아래 api 로 이벤트를 전달합니다 
- 
 ```json
 POST /events
 
@@ -63,6 +58,27 @@ POST /events
 
 ```
 
+- ADD
+  - 리뷰 작성 요청에 따른 포인트를 적립하고 히스토리를 남기는 기능
+
+- MOD
+  - 리뷰 수정 요청에 따른 포인트를 적립,회수 하고 히스토리를 남기는 기능
+
+- DELETE
+  - 리뷰 삭제 요청에 따른 포인트를 회수하고 히스토리를 남기는 기능
+
+
+### 2. 포인트 조회 API (/users/{userId}/mileage)
+
+ 회원의 현재 마일리지를 조회하는 기능
+
+## 아쉬운점
+
+- 파라미터 검사, 예외처리를 못했습니다.
+- 동시성 검사 테스트를 하지 못했습니다.
+- 멀티 인스턴스 환경에서 해당 어플리케이션을 실행한다고 하면 동시성을 보장할 수 없을 것 같습니다.
+  - 분산락을 활용하면 동시성을 보장할 수 있다고 하는데 적용하지 못했습니다.
+ 
 ## 서비스 설명
 
 - 리뷰를 작성할 때 포인트를 부여하고 개인별 포인트를 관리하는 서비스 입니다
